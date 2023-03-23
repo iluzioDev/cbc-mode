@@ -70,7 +70,7 @@ def main():
           xor_blocks.append(hex(int(text_blocks[i], 16) ^ int(encrypted_blocks[i - 1], 16))[2:].zfill(32))
           last = encrypted_blocks[i - 1]
         elif i != 0:
-          text_blocks[i] = text_blocks[i][::-1].zfill(32)[::-1]
+          text_blocks[i] = text_blocks[i].zfill(32)
           xor_blocks.append(hex(int(text_blocks[i], 16) ^ int(encrypted_blocks[i - 1], 16))[2:].zfill(32))
         else:
           xor_blocks.append(hex(int(text_blocks[i], 16) ^ int(i_vector, 16))[2:].zfill(32))

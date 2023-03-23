@@ -62,19 +62,26 @@ def main():
       
       xor_blocks = []
       encrypted_blocks = []
+      length = 0
       for i in range(len(text_blocks)):
-        # If last block is not 32 bytes long, remove padding and encrypt it
-        if i == len(text_blocks) - 1 and len(text_blocks[i]) != 32:
-          xor_blocks.append(hex(int(text_blocks[i], 16) ^ int(encrypted_blocks[i - 1][:len(text_blocks[i])], 16))[2:].zfill(32))
+        if i != 0 and i == len(text_blocks) - 1 and len(text_blocks[i]) != 32:
+          length = len(text_blocks[i])
+          text_blocks[i] = text_blocks[i][::-1].zfill(32)[::-1]
+          xor_blocks.append(hex(int(text_blocks[i], 16) ^ int(encrypted_blocks[i - 1], 16))[2:].zfill(32))
+          last = encrypted_blocks[i - 1]
         elif i != 0:
+          text_blocks[i] = text_blocks[i][::-1].zfill(32)[::-1]
           xor_blocks.append(hex(int(text_blocks[i], 16) ^ int(encrypted_blocks[i - 1], 16))[2:].zfill(32))
         else:
           xor_blocks.append(hex(int(text_blocks[i], 16) ^ int(i_vector, 16))[2:].zfill(32))
   
         encrypted_blocks.append(aes.encrypt(xor_blocks[i], key))
+        if i != 0:
+          encrypted_blocks[i - 1] = encrypted_blocks[i]
+          encrypted_blocks[i] = last[:length]
         print(ROW)
         
-      print('■                           ENCRYPTED TEXT                                        ■')
+      print('■                             ENCRYPTED TEXT                                          ■')
       print(ROW)
       for i in range(len(encrypted_blocks)):
         print(Fore.YELLOW + 'Block ' + str(i + 1) + '  ->  ' + Fore.CYAN + encrypted_blocks[i] + Fore.RESET)
